@@ -1,0 +1,520 @@
+============================================================
+                         CodeCraft
+
+     Picking up where the programming course left off!
+
+    Darren Collins, Editor, collins@cyberelectric.net.au
+          http://www.cyberelectric.net.au/~collins
+============================================================
+ 20th August 2000                             Issue 2000-28
+                     Subscribers: 3208
+============================================================
+
+This newsletter is never sent unsolicited.  To be removed
+from the mailing list, send any email to:
+mailto:CodeCraft-unsubscribe@topica.com
+
+To subscribe, send any email to:
+mailto:CodeCraft-subscribe@topica.com
+
+============================================================
+FROM THE EDITOR
+============================================================
+
+Over the last few months, I've had several people ask me to
+write an article explaining the basics of pointers. I don't
+think any other topic trips more C/C++ students up than that
+one! Bad pointers have certainly caused me my fair share of
+core dumps and bus errors over the years.
+
+I never did get around to writing that article, but luckily
+Patrick Cozzi did. This is his first article for CodeCraft,
+and I'm sure you'll agree with me that he writes extremely
+well. If you enjoy his introduction, please write and thank
+him - hopefully we can convince him to contribute again!
+
+If you'd like to write an article for CodeCraft, please let
+me know. Well-written articles, tips, web site or book
+reviews, and even computer jokes are always welcome.
+
+Here's an apt quote I came across this week:
+
+    For some reason most people seem to be born without the
+    part of the brain that understands pointers.
+    - Joel Spolsky
+
+Joel has worked for Microsoft (on the Excel team) and Juno,
+and now runs his own consulting company. He has written many
+excellent articles on those and other experiences, and his
+guide to user interfaces is outstanding.
+
+You can read more at Joel's web site:
+http://joel.editthispage.com/stories/storyReader$20
+
+Until next week, happy coding!
+
+Darren.
+mailto:collins@cyberelectric.net.au
+
+The nice thing about C++ is that only your friends can
+handle your private parts.
+
+============================================================
+ADVERTISEMENT
+============================================================
+Some interesting new articles on About.com this week:
+
+C/C++ - Comparing C and C++
+http://www.cyberelectric.net.au/~collins/go/aboutcpp.htm
+
+IT/MIS - Quality Code Equals Quality Programs
+http://www.cyberelectric.net.au/~collins/go/aboutit.htm
+
+Computer Science - Patterns in Software Development
+http://www.cyberelectric.net.au/~collins/go/aboutcs.htm
+
+Windows - Upgrading to Internet Explorer 5.5 Safely
+http://www.cyberelectric.net.au/~collins/go/aboutwin.htm
+
+============================================================
+C/C++
+============================================================
+Introduction to Pointers
+by Patrick Cozzi (pjc176@psu.edu)
+
+There is nothing that gives beginning C++ programmers more
+trouble than pointers. Pointers are central to the C++
+language and learning when and how to use them is critical
+to mastering the language. Pointers make many things
+possible that you simply cannot do with out them. Pointers
+allow us to manipulate data in very flexible, powerful ways.
+Dynamic memory allocation uses pointers extensively. The
+ability to allocate and then re-allocate memory at run-time
+is very important and used in all most every commercial
+program available. Don’t get me wrong, you can learn a lot
+about C++ without entering into the world of pointers, but
+you would be selling yourself short.
+
+What is a Pointer anyway?
+
+Variables have addresses! Just like your home has an
+address, each variable you declare in your program as an
+address. An address is simply a number your computer’s
+hardware uses to access a memory location. You will commonly
+see address represented in hexadecimal notation, such as
+0x3AC0. Don’t let this way of representing an address scare
+you into thinking an address is some mystical thing. 0x3AC0
+is really 15,040 in decimal, which is what most humans are
+use to thinking in. Use your calculator to convert between
+the two number systems to see for yourself. Ok, so an
+address is just a number. The number isn’t too important to
+use right now, what’s important is what is AT the address,
+whether it be an integer, a string, a function, or the start
+of another program.
+
+A pointer is just a variable that stores a memory address.
+Simple! Think about that. Variables have addresses. A
+pointer is a special kind of variable that holds the address
+of another variable (or possibly something more
+interesting).
+
+How do I get the address of a variable?
+
+You use the address-of operator, which is &. When you prefix
+a variable with a &, you don’t get the value of what is
+stored “in” the variable, you get the actual address of the
+variable. This is where the variable is stored in memory.
+For example, the line
+
+    ptrNumber = &number;
+
+should be read in your mind as “set ptrNumber to the address
+of number” or “store the address of the variable number in
+the variable ptrNumber.” I think it’s time for a short
+example. Go ahead and type (or copy and paste) the following
+code into your favorite C++ editor. I urge you to try all
+the sample code in this article. The best way to learn
+anything is to practice, and this is especially true about
+pointers.
+
+    #include <iostream.h>
+
+    void main(void)
+    {
+        int i = 100;
+
+        cout << "i = " << i << endl;
+        cout << "The address of i = " << &i << endl;
+    }
+
+First notice that we declare a variable ‘i’ to be of type
+integer. We assign the value 100 to ‘i’ on the same line as
+we declare it. In the following line, we print the value of
+‘i’ out to the screen. Nothing new yet, just some simple
+code you would meet in the first few chapters of any
+introductory programming book.
+
+The next line is where things start to get interesting. Now,
+we are not printing the value “in” ‘i’. We are getting the
+actual ADDRESS OF ‘i’, that is, WHERE ‘i’ is stored in
+memory. The output I get from the sample is as following:
+
+    i = 100
+    The address of i = 0x0012FF7C
+
+The first line of output is old news. The second line is
+what we care about. Don’t expect to have the same address as
+I do for ‘i’. In fact, don’t expect to have the same address
+each time you run the program. The variable receives its
+address at run-time. It’s up to the Operating System to load
+your program’s code and data. Don’t expect your OS to put
+your variable in the same location every time it runs your
+program.
+
+What does this have to do with pointers?
+
+I know I have been talking a lot about the address of
+variables. As I hope you recall, pointers are variables that
+store addresses of other variables. We already know how to
+get the address of a variable. Now all we need to know is
+how to declare a pointer and how to store another variable’s
+address in it. The declaration for a pointer looks similar
+to the declaration for normal variables.
+
+    int number;
+    int *ptrNumber;     // pointer to an integer
+
+The first declaration is declaring a normal variable. The
+second statement declares a pointer variable that stores the
+address of an integer variable. The first thing to notice is
+the * preceding the name of the variable. This identifies
+the variable as a pointer. You could have also put the *
+right after the variable type, like so:
+
+    int* ptrNumber;
+
+Both are correct. It is a matter of religions which one you
+choose. People that learned C before they learned C++ tend
+to put the * before the variable name. Diehard C++ fans put
+the * after the variable type. The choice is totally up to
+you, the compiler will generate the same code either way.
+BUT do not be fooled into doing this:
+
+    int* i, j;  // i is a pointer. j is NOT a pointer,
+                // just a normal integer
+
+Ok, so we know that the * means the variable is a pointer.
+The ‘int’ doesn’t mean that the variable ‘ptrNumber’ is an
+integer. It means it’s a pointer to an integer. Go ahead,
+read it out loud: “ptrNumber is a pointer to an integer.”
+
+How do we use pointers?
+
+Once you declare a pointer, you have to give it something to
+point to. In all of our simple examples we will give it
+another variable to point to. Here’s an example:
+
+    #include <iostream.h>
+
+    void main(void)
+    {
+        int Number;
+        int *ptrNumber;
+
+        Number = 50;
+        ptrNumber = &Number;
+        // sets 'ptrNumber' to the address of 'Number'
+        // 'ptrNumber' now points to 'Number'
+
+        cout << "Number = " << Number << endl;
+        cout << "Address of Number = " << &Number
+            << endl << endl;
+
+        cout << "*ptrNumber = " << *ptrNumber << endl;
+        cout << "ptrNumber = " << ptrNumber << endl;
+    }
+
+The first statement in main() declares a variable ‘Number’
+of type integer. The next statement declares a pointer
+variable ‘ptrNumber’ that we are going to use to point to
+‘Number.’ Notice the naming convention. Any pointer variable
+I declare always starts with a lowercase ‘ptr.’ It’s a good
+idea to get into the habit of prefixing your pointer
+variable names with either ‘p’ or ‘ptr.’ For that matter,
+it’s a good idea to use a naming convention for all your
+identifiers.
+
+Next we assign the value 50 to ‘Number.’ Now here is where
+we start to get tricky.
+
+    ptrNumber = &Number;
+
+First look at the right hand side of the expression. It
+evaluates to whatever the address of ‘Number’ is, which will
+be different every time you run the program. We are
+assigning this address to ‘ptrNumber.’ Now ‘ptrNumber’ holds
+the address of ‘Number’. The variables ‘ptrNumber’ and
+‘Number’ look something like this in memory
+
+    Variable Name:  ptrNumber       Number
+    Address:        0x0012FF78      0x0012FF7C
+    Value:          0x0012FF7C      50
+
+Notice how the value of ‘ptrNumber’ is the same as the
+address of ‘Number’. The next three lines are old news:
+
+    cout << "Number = " << Number << endl;
+    cout << "Address of Number = " << &Number
+        << endl << endl;
+
+The output on my machine for these lines follows:
+
+    Number = 50
+    Address of Number = 0x0012FF7C
+
+Things get really interesting when you execute the next two
+lines of code:
+
+    cout << "*ptrNumber = " << *ptrNumber << endl;
+    cout << "ptrNumber = " << ptrNumber << endl;
+
+The output for them is:
+
+    *ptrNumber = 50
+    ptrNumber = 0x0012FF7C
+
+We know that ‘ptrNumber’ holds the address of ‘Number’. You
+can verify this by looking at the output for ‘ptrNumber’ and
+‘&Number’ and see that they are the same address. The big
+thing to get here is what ‘*ptrNumber’ evaluates to. Please
+repeat after me:
+
+    When a pointer variable is preceded with a * in an
+    expression, it returns the value of what it points to.
+
+Memorize that sentence. Write it on a sticky note and slap
+it on the top of your monitor. Every time you see the
+expression
+
+    *ptrNumber
+
+read it as “what ptrNumber points to”. For example read
+
+    NewNumber = *ptrNumber;
+
+As “set NewNumber to what ptrNumber points to.” Accessing a
+variable like this is called indirect access and accessing
+the variable directly is call direct access. Take another
+look at the program’s memory:
+
+    Variable Name:  ptrNumber       Number
+    Address:        0x0012FF78      0x0012FF7C
+    Value:          0x0012FF7C      50
+
+When we say ‘cout << *ptrNumber’, the program gets the value
+stored at ‘ptrNumber’, and then uses this value as the
+address where the actual data is stored that we want. In
+this example, the program reads the value ‘0x0012FF7C’ from
+ptrNumber and then goes to the address ‘0x0012FF7C’ to
+retrieve the value ‘50’
+
+The * is known as the indirection operator. Let’s exhaust
+this concept with one more example:
+
+    #include <iostream.h>
+
+    void main(void)
+    {
+        int Age;
+        int *ptrAge;
+
+        Age = 16;
+        ptrAge = &Age;
+
+        *ptrAge = 21; // indirect access to 'Age'
+
+        cout << "Your age is " << Age << endl;
+    }
+
+Here we have a variable ‘Age’ and a variable that points to
+‘Age’ named ‘ptrAge.’ First ‘Age’ is assigned the value 16.
+Once ‘ptrAge’ points to ‘Age’, we use indirect access to
+change the value of ‘Age’ to 21. The big thing to keep in
+mind is:
+
+    *ptrAge = ...
+
+has the same effect as
+
+    Age = ...
+
+although two different things happen on the chip. Up until
+this point, we have only been using integer variables. When
+using pointers, you are not just restricted to using
+integers. In fact the true power of pointers are unleashed
+when they are combined with complex structures such as
+classes, structures, and arrays. To keep things simple, here
+is a short code snippet of a char pointer:
+
+    char  grade = ‘A’;
+    char *ptrGrade;
+
+    ptrGrade = grade;
+
+This is the same exact concept except we replaced the
+keyword ‘int’ with ‘char’. Make sure to note that the
+pointer variable must point to the correct type. For
+example, this would be bad:
+
+    char grade = ‘A’;
+    int *ptrGrade;
+
+    ptrGrade = &grade;
+
+When I tried to compile this, my compiler was smart enough
+to tell me I was making a mistake:
+
+error C2440: '=' : cannot convert from 'char *' to 'int *'
+
+There will be times when you want to do something like this.
+You may want to get the low byte out of a word or you might
+want the high word out of a double word. You can use a
+powerful technique called ‘type casting’ to accomplish this.
+
+We have just scratched the surface. We have opened a door of
+endless possibilities. The world of pointers makes all sorts
+of data structures and algorithms possible. Imagine being
+able to dynamically resize an array while your program is
+running. Imagine having the ability to have a module call a
+function you tell it to when a certain event happens.
+Imagine being able to write a program that modifies itself
+while it’s running. Imagine begin able to create and destroy
+structures on the fly. The possibilities are only limited by
+your creativity and willingness to learn.
+
+I urge you to play with the example code in this article.
+Copy and paste it into your C++ editor. Make changes to the
+code. Practice using indirect access to change the value of
+a variable. Declare a few variables and then print out the
+address of each one and see if you can make any guesses on
+how the variables are stored in memory.
+
+Things to keep in mind:
+
+    Prefix a variable with & to get the address of it.
+    Prefix a pointer with * to get what it points at.
+
+I would like to hear your comments, programming questions,
+or anything else you have to say.
+
+Patrick Cozzi  mailto:pjc176@psu.edu
+
+
+
+Patrick Cozzi is an undergraduate computer science major at
+the Pennsylvania State University.  He currently resides in
+Folsom, California, where he is on co-op developing client-
+server applications.
+
+============================================================
+MARSHALL CLINE'S C++ FAQ LITE
+============================================================
+Copyright 1991-2000,
+Marshall P. Cline, PhD, mailto:cline@parashift.com
+------------------------------------------------------------
+
+[8.5] When should I use references, and when should I use
+pointers?
+
+Use references when you can, and pointers when you have to.
+
+References are usually preferred over pointers whenever you
+don't need "reseating". This usually means that references
+are most useful in a class's public interface. References
+typically appear on the skin of an object, and pointers on
+the inside.
+
+The exception to the above is where a function's parameter
+or return value needs a "sentinel" reference. This is
+usually best done by returning/taking a pointer, and giving
+the NULL pointer this special significance (references
+should always alias objects, not a dereferenced NULL
+pointer).
+
+Note: Old line C programmers sometimes don't like references
+since they provide reference semantics that isn't explicit
+in the caller's code. After some C++ experience, however,
+one quickly realizes this is a form of information hiding,
+which is an asset rather than a liability. e.g. programmers
+should write code in the language of the problem rather than
+the language of the machine.
+
+------------------------------------------------------------
+
+An extract from Marshall Cline's C++ FAQ Lite document:
+http://www.cerfnet.com/~mpcline/c++-faq-lite/
+Read about his 500% larger C++ FAQ Book at Amazon.com:
+http://www.cyberelectric.net.au/~collins/go/amfaq.htm
+
+============================================================
+THE LIGHTER SIDE OF COMPUTERS
+============================================================
+Unix Shell Humour
+
+If you have access to Unix try these commands out:
+
+     % cat "food in cans"
+     cat: can't open food in cans
+
+     % nice man woman
+     No manual entry for woman.
+
+     % rm God
+     rm: God nonexistent
+
+     % ar t God
+     ar: God does not exist
+
+     % ar r God
+     ar: creating God
+
+     % "How would you rate Quayle's incompetence?
+     Unmatched ".
+
+     % [Where is Elvis?
+     Missing ].
+
+     % If I had a ( for every $ the Congress spent, what
+     would I have?
+     Too many ('s.
+
+     % make love
+     Make: Don't know how to make love. Stop.
+
+     % sleep with me
+     bad character
+
+     % got a light?
+     No match.
+
+     % man: why did you get a divorce?
+     man:: Too many arguments.
+
+     % !:say, what is saccharine?
+     Bad substitute.
+
+     % rm lawyer-ethics
+     rm: lawyer-ethics nonexistent
+
+     % ^How did the sex change^ operation go?
+     Modifier failed.
+
+============================================================
+Copyright 2000 Darren Collins
+collins@cyberelectric.net.au
+http://www.cyberelectric.net.au/~collins
+Kiama, NSW, Australia
+
+This newsletter may be freely distributed provided it is not
+modified in any way.
+============================================================

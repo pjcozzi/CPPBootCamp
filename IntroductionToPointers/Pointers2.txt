@@ -1,0 +1,711 @@
+============================================================
+                         CodeCraft
+
+     Picking up where the programming course left off!
+
+    Darren Collins, Editor, collins@cyberelectric.net.au
+          http://www.cyberelectric.net.au/~collins
+============================================================
+ 11th September 2000                          Issue 2000-29
+                     Subscribers: 3382
+============================================================
+
+This newsletter is never sent unsolicited.  To be removed
+from the mailing list, send any email to:
+mailto:CodeCraft-unsubscribe@topica.com
+
+To subscribe, send any email to:
+mailto:CodeCraft-subscribe@topica.com
+
+============================================================
+FROM THE EDITOR
+============================================================
+
+Please forgive the lateness of this issue of CodeCraft.
+There's no real excuse, other than the ubiquitous "I've been
+busy".
+
+One thing I was busy with was watching the Olympic Flame
+arrive in my home town, Kiama, on Sunday night. Like it or
+not, the Olympics are upon us! My employer (Nortel Networks)
+had the foresight and kindness to install a couple of huge
+flat-screen plasma TV's (and subscribe to the Olympics Pay-
+TV channels) in our lab so we can watch our favourite
+events. Too cool!
+
+I also bought myself a Palm m100 this week. It's my first
+PDA, and I've gotta say I'm hooked. These little buggers are
+so damned useful I don't know how I got by without one. I
+especially love how it syncs so well with Outlook 2000. I'm
+hoping to try my hand at Palm programming (no pun intended!)
+when I get some spare time.
+
+You can check out the Palm m100 and other models at:
+http://www.palm.com/
+
+The examples in Patrick's article in this issue are in old-
+style C++, but don't let that stop you. To comply with ANSI
+C++, drop the .h from the header file includes (i.e.
+<iostream.h> becomes <iostream>), import the namespaces for
+the header files (e.g. 'using namespace std;') and change
+main() to return an int. The changes aren't major in a small
+program like this.
+
+Until next week, happy coding!
+
+Darren.
+mailto:collins@cyberelectric.net.au
+
+"A gift for quotation is a serviceable substitute for wit."
+- W. Somerset Maugham
+
+============================================================
+ADVERTISEMENT
+============================================================
+Some interesting new articles on About.com this week:
+
+C/C++ - Using The Memory Heap In C++
+http://www.cyberelectric.net.au/~collins/go/aboutcpp.htm
+
+IT/MIS - Hidden Tracking Of Word Documents
+http://www.cyberelectric.net.au/~collins/go/aboutit.htm
+
+Computer Science - Linked List Data Structures
+http://www.cyberelectric.net.au/~collins/go/aboutcs.htm
+
+Computer Networking - The Sydney Olympics Network
+http://www.cyberelectric.net.au/~collins/go/aboutnetw.htm
+
+============================================================
+C/C++
+============================================================
+Introduction to Pointers Part II: Pointers and Arrays
+by Patrick Cozzi (pjc176@psu.edu)
+
+There is a close relationship between pointers and arrays.
+You can create a pointer to an array, then use the pointer
+to iterate (loop through) the array, instead of using the
+standard subscript notation. In order to understand how
+pointers and arrays relate, we have to get a better
+understanding of how arrays are stored in memory. Then we
+can learn how to use pointers to manipulate the memory that
+arrays reside in.
+
+Variable Sizes
+--------------
+We know that variables exist in memory. We also know that
+each variable has an address. We can obtain this address and
+also indirectly access the variable through this address.
+But what about the size of a variable? How much memory does
+a variable take up? Does each variable take up one 'cell' of
+memory? Or do some variable span across multiple 'cells'?
+
+The answer is different variables require different amounts
+of memory, and many variable are stored across multiple
+bytes. A byte is the smallest amount of memory we can
+address at one time (a byte is made up of smaller units
+called bits, but let’s not confuse ourselves with details).
+A byte can store any of 256 values, usually either 0 to 255
+or -128 to 127, depending on how you look at it. We can use
+the sizeof() operator to find out how much storage a data
+type requires. The following example demonstrates this.
+
+#include <iostream.h>
+
+void main(void)
+{
+    int numbers[5] = { 0 };
+
+    cout << "sizeof(char): " << sizeof(char) << endl;
+    cout << "sizeof(int): " << sizeof(int) << endl;
+    cout << "sizeof(float): " << sizeof(float) << endl;
+
+    // number of bytes array requires
+    cout << "sizeof(numbers): " << sizeof(numbers) << endl;
+
+    // number of elements in array
+    cout << "sizeof(numbers) / sizeof(numbers[0]): "
+         << sizeof(numbers) / sizeof(numbers[0]) << endl;
+}
+
+
+Depending on your platform, your output may be different.
+The output on my machine follows:
+
+    sizeof(char): 1
+    sizeof(int): 4
+    sizeof(float): 4
+    sizeof(numbers): 20
+    sizeof(numbers) / sizeof(numbers[0]): 5
+
+Notice how the sizeof() operator takes one parameter. You
+can pass it a data type (like int) or a variable name.
+Whatever you pass it, the sizeof() operator will return the
+number of bytes that the data type of its parameter
+requires.
+
+Technical Note:
+
+    "Sizes of C++ objects are expressed in terms of
+    multiples of the size of a char, so by definition the
+    size of a char is 1."  [The C++ Programming Language]
+
+    This means that the sizeof() operator returns the number
+    of chars a particular data type requires. On all the
+    architectures that I know of, a char is one byte wide.
+    So for simplicity, I am going to assume that a char is
+    one byte wide.
+
+Looking back at the example, the sizeof(char) is one. The
+next two calls to sizeof() reveal that an int and a float
+both take up four bytes of memory on my machine. Variables
+require different amounts of memory depending on how big or
+how accurate of a number they can represent. If we were
+running 16-bit DOS here, an int would only take up two bytes
+of memory and the range of an int wouldn’t be as big.
+
+The most interesting calls of all are the last two. numbers
+is an array of integers containing five elements. A simple
+call to sizeof(numbers) tells us how much memory this array
+takes up. This is cool. But even cooler: if we divide the
+size of the array by the size of one of the elements in the
+array, we get the number of elements in the array. Lets see
+why this works:
+
+    int numbers[5];
+
+An integer takes 4 bytes and we have 5 of them, so this
+array requires 20 bytes. Now just work backwards. We know
+the array is 20 bytes in length and we know that each
+element is an integer (thus requiring 4 bytes). Now we
+divide to get the number of elements in the array.
+
+    20 / 4 = 5.
+
+I know all this talk about the size of variables may seem a
+bit off topic but this is very important when dealing with
+pointers and arrays.
+
+Arrays in Memory
+----------------
+Say we have the following variable:
+
+    int number;
+
+To get the address of this variable we do this:
+
+    cout << "address of number: " << &number << endl;
+
+Now what if we have this:
+
+    int numbers[5];
+
+We know this array takes up memory. We also know this array
+is just a list of variables. So each element (variable) in
+the array must have its own address. There is something very
+important about how arrays are stored in memory. Each
+element in an array is stored right after the one before.
+Except of course, the first element, which is stored
+wherever the operating system felt like putting it. Lets see
+what this array would look like in memory:
+
+    Array Element       Memory Location
+    numbers[0]          1000
+    numbers[1]          1004
+    numbers[2]          1008
+    numbers[3]          1012
+    numbers[4]          1016
+
+In this example the operating system decided to put the
+first element at memory address 1000. Since this is an array
+of integers, the next element in the array is at memory
+address 1004. 1004 is the address 1000 plus sizeof(int). The
+next is at location 1008. And so on.
+
+Now things are starting to get interesting. Fire up your C++
+IDE and check out the following program:
+
+#include <iostream.h>
+
+void main(void)
+{
+    int numbers[5];
+    int i;
+
+    cout << "&numbers[0] = " << &numbers[0] << endl;
+    cout << "numbers = " << numbers << endl;
+    cout << endl;
+
+    for (i = 0; i < 5; i++)
+        cout << "address of numbers[" << i
+             << "] = " << &numbers[i] << endl;
+}
+
+Converting the output from hex to decimal, the output on my
+computer looks like this:
+
+    &numbers[0] = 1245036
+    numbers = 1245036
+
+    address of numbers[0] = 1245036
+    address of numbers[1] = 1245040
+    address of numbers[2] = 1245044
+    address of numbers[3] = 1245048
+    address of numbers[4] = 1245052
+
+The first cout statement shows that we can apply the address
+of operator (&) to an element of the array. In this case, we
+are getting the address of the first element in the array.
+This is the start address of the array. This address is
+commonly referred to as the "address of the array" or the
+array’s "base address". Now what’s even cooler is that the
+array name without any subscripts also returns the address
+of the first element in the array. Modify the previous
+example and add the following line of code at the bottom of
+the program:
+
+    cout << "(&numbers[0] == numbers)? "
+         << (&numbers[0] == numbers) << endl;
+
+The output for this line is:
+
+    (&numbers[0] == numbers)? 1
+
+1 is non-zero, which means TRUE. There is real live proof
+that an array name without any subscripts returns the
+address of the first element in the array. Now lets take a
+quick look back at the rest of the program. The for loop
+goes through each element in the array and displays the
+address of the element. You will notice that each address is
+4 bytes away from the one next to it. This is because the
+array elements are each 4 bytes wide and are stored in a
+linear fashion. To gain a deeper understanding of this
+arrangement, I recommend you recompile this program using
+different data types for the numbers array. In particular,
+try it out with char, int, long, float, and double.
+
+Accessing Arrays Using Pointer Notation
+---------------------------------------
+We all know we can access an array like this:
+
+    int numbers[5];
+
+    numbers[0] = 1;
+    numbers[1] = 100;
+
+We also know that the name of an array without any
+subscripts returns the address of the first element in the
+array. Wait a minute! What is the name of a variable that
+contains the address of another variable? A pointer. Woo, so
+the name of an array is a pointer to the first element in
+the array. So to access the value of the first element in an
+array we could do this:
+
+    int numbers[5];
+
+    *(numbers) = 10;
+
+I use the parenthesis here just too make sure everything is
+clear. In this case they are not required. Taking a quick
+look at this, we know that 'numbers' is a pointer to the
+first element in the array. So, we de-reference (get what is
+stored at the address that 'numbers' holds) the pointer by
+using the * operator. If we were to run:
+
+    cout << ( numbers[0] == *(numbers) ) << endl;
+
+The output would be
+
+    1
+
+meaning TRUE. This is great for accessing the first element
+in an array, but how are we going access the other elements?
+Assuming we have the numbers array from above, we could do
+this to access the second element in the array:
+
+    *(numbers + 1) = 123;
+
+Here we NEED the parenthesis. Read the left hand side of
+this assignment statement from the 'inside-out'.
+
+    numbers + 1
+
+numbers points to the first element in the array, so to
+point at the second element, we just add one to numbers?
+Well, yes and no. We are NOT adding one byte to the base
+address of the array. We are adding sizeof(int) to the base
+address of the array. The compiler is pretty smart and it
+knows that the numbers array contains integers (from the
+declaration). So, if numbers starts at address 1000, and
+each integer is 4 bytes wide then
+
+    numbers + 1
+
+is the address 1004. When we access the value that is stored
+at 1004, we get the second element in the numbers array.
+This topic is called pointer arithmetic. The more you use
+pointers, the more you are going to be using this concept. I
+urge you to work through the following example. Don’t stop
+studying it until you are sure you understand every line of
+code. If you are familiar with the debugger, add a watch to
+ptrNumbers and step through the program one line at a time.
+
+#include <iostream.h>
+
+void main(void)
+{
+    int     numbers[5] = {10, 20, 30, 40, 0} ;
+    int     *ptrNumbers;  // pointer to integer
+    int     i;
+
+    cout << "Base address of array: " << &numbers[0]
+         << endl;
+    cout << "Address of last element in array: "
+         << &numbers[4];
+    cout << endl << endl;
+
+    // use pointer notation to iterate through
+    // the array until we find an element equal to zero
+    for (i = 0; *(numbers + i) != 0; i++)
+            cout << "*(numbers + " << i << ") = "
+                 << *(numbers + i) << endl;
+
+    // ptrNumbers points to the start of the array
+    // same as ptrNumbers = &numbers[0];
+    ptrNumbers = numbers;
+
+    // loop until we find the last element in the array
+    while (*ptrNumbers != 0)
+    {
+        cout << "ptrNumbers = " << ptrNumbers << endl;
+        cout << "*ptrNumbers = " << *ptrNumbers << endl;
+        ptrNumbers++;   // Make ptrNumbers point to
+                        // the next element
+    }
+}
+
+This example might seem kind of long but it has a lot of
+comments. Lets divide and conquer.
+
+The declarations:
+
+    int     numbers[5] = {10, 20, 30, 40, 0} ;
+    int     *ptrNumbers;    // pointer to integer
+    int     i;
+
+First we declare an integer array named numbers. To save
+some space, we initialized the array right in the
+declaration. Notice that the last element in the array has
+the value of zero. This will become important later. Next we
+declare an integer pointer, ptrNumbers. This pointer is no
+different from the pointers we worked with in the last
+article. All it does is hold the address of an integer. But
+the way we are going to manipulate the pointer is going to
+be different. Lastly, we declare a simple integer variable
+called i.
+
+The next few lines of code display some addresses:
+
+    cout << "Base address of array: " << &numbers[0]
+         << endl;
+    cout << "Address of last element in array: "
+         << &numbers[4];
+    cout << endl << endl;
+
+The output follows:
+
+    Base address of array: 1245036
+    Address of last element in array: 1245052
+
+The numbers array starts at the address 1245036. The fifth
+element in the array (numbers[4]) is located at memory
+address 1245052.
+
+    1245052 - 1245036 = 16.
+
+So the fifth element is 16 bytes away from the first
+element. This is no surprise because on my machine
+
+    sizeof(int) == 4
+
+So the second element is 4 bytes higher in memory than the
+first. And the third element is 8 bytes higher than the
+first. And so on. Now that we know the address of some key
+elements in the array, lets look at the next section of
+code:
+
+    for (i = 0; *(numbers + i) != 0; i++)
+            cout << "*(numbers + " << i << ") = "
+                 << *(numbers + i) << endl;
+
+Here’s the output:
+
+    *(numbers + 0) = 10
+    *(numbers + 1) = 20
+    *(numbers + 2) = 30
+    *(numbers + 3) = 40
+
+First break up the for statement. You can break it up into
+three sections. First is the initialization section. This is
+simple, all we do is set the variable i equal to zero. Next
+is the test expression. Before diving in, we should note the
+purpose of this for loop. We are trying to iterate through
+the array until we find an element that is zero.
+
+Here’s what’s happening in the test expression. We are
+adding the 'offset' i to the base address 'numbers' and
+comparing what is stored at that address to zero. That’s one
+way to look at it. You can also say we are comparing
+numbers[i] to zero. This is also correct. In the final
+section of the for loop, we simply increase i, so we can
+access the next element in the array. Now lets take a look
+at the body of the loop.
+
+    cout << "*(numbers + " << i << ") = "
+         << *(numbers + i) << endl;
+
+After seeing the output of the loop, this statement is
+pretty easy to digest. We should notice that *(numbers + i)
+is an equivalent statement to numbers[i]. We should also
+note the use of the parentheses, which are required.
+
+Lets look at the next line of code, outside of the for loop:
+
+    ptrNumbers = numbers;
+
+ptrNumbers is a pointer to an integer. Here, we are
+assigning it the base address of the numbers arrays. Make
+sure to notice that
+
+    ptrNumbers = &numbers[0];
+
+is an equivalent statement. Now lets move on to the while
+loop:
+
+    while (*ptrNumbers != 0)
+    {
+        cout << "ptrNumbers = " << ptrNumbers << endl;
+        cout << "*ptrNumbers = " << *ptrNumbers << endl;
+        ptrNumbers++;   // Make ptrNumbers point to
+                        // the next element
+    }
+
+The output follows:
+
+    ptrNumbers = 1245036
+    *ptrNumbers = 10
+    ptrNumbers = 1245040
+    *ptrNumbers = 20
+    ptrNumbers = 1245044
+    *ptrNumbers = 30
+    ptrNumbers = 1245048
+    *ptrNumbers = 40
+
+Please keep in mind that ptrNumbers is just a pointer to an
+integer. The idea here is that inside the loop we can change
+what ptrNumbers points to. So each time through the loop
+ptrNumbers will point at the next element in the numbers
+array.
+
+The test expression for the while loop compares what
+ptrNumbers points at, to zero. Once ptrNumbers points to a
+memory location containing zero, the loop will terminate.
+The body of the loop is responsible for doing three things.
+
+1. Print the address that ptrNumbers contains
+2. Print what ptrNumbers points at.
+3. Increases the address stored in ptrNumbers (by
+sizeof(int))
+
+Just for a second, try to totally forget about the numbers
+array. Just know that ptrNumbers points to some memory
+location. We know there is an integer there, and we know
+there is an integer next to that one, and so on. We are
+trying to iterate through these values until we find the one
+that is zero. When that happens, it is our cue to exit. Lets
+take a look at the computer’s memory.
+
+    ptrNumbers: 1245036
+
+    Address Value
+    1245036 10
+    1245040 20
+    1245044 30
+    1245048 40
+    1245052 0
+
+In the first trip around the loop, ptrNumbers point at a
+memory location storing the value 10. We display this
+information to the screen. Then the magic happens.
+
+    ptrNumbers++;
+
+This is the pointer arithmetic we mentioned early. Now
+ptrNumbers contains the address 1245040. The compiler knows
+that ptrNumbers points to an integer, so when you use the
+increment operator, ptrNumbers becomes ptrNumbers +
+sizeof(int). The process continues until ptrNumbers equals
+1245052. Because the value at this address is zero, the
+while loop will terminate.
+
+This type of processing is very important in computer
+science. Linked Lists are based this concept: use a pointer
+to iterate through a list until we reach the end. C style
+strings use this same technique. Any kind of list processing
+I can think of uses this idea. It is everywhere!
+
+Good luck with your programming! I welcome your comments and
+questions.
+
+Patrick Cozzi
+mailto:pjc176@psu.edu
+
+------------------------------------------------------------
+Patrick Cozzi is an undergraduate computer science major at
+the Pennsylvania State University. He currently resides in
+Folsom, California, where he is on co-op developing client-
+server applications.
+------------------------------------------------------------
+
+
+============================================================
+MARSHALL CLINE'S C++ FAQ LITE
+============================================================
+Copyright 1991-2000,
+Marshall P. Cline, PhD, mailto:cline@parashift.com
+------------------------------------------------------------
+
+[9.1] What's the deal with inline functions?
+
+An inline function is a function whose code gets inserted
+into the caller's code stream.
+
+Like a #define macro, inline functions improve performance
+by avoiding the overhead of the call itself and
+(especially!) by the compiler being able to optimize through
+the call ("procedural integration").
+
+------------------------------------------------------------
+
+An extract from Marshall Cline's C++ FAQ Lite document:
+http://www.cerfnet.com/~mpcline/c++-faq-lite/
+Read about his 500% larger C++ FAQ Book at Amazon.com:
+http://www.cyberelectric.net.au/~collins/go/amfaq.htm
+
+============================================================
+THE LIGHTER SIDE OF COMPUTERS
+============================================================
+
+These are the unwritten rules from the highly over worked,
+but highly under paid technical support staff at an Internet
+service provider near you:
+
+1.  DO NOT talk over me. Listen damn it, you can't do what I
+tell you to do constantly jabbering bull over me. I talk...
+you do. Why did you even ask me a question if you are going
+to answer it?
+
+2.  DO NOT call me and then put me on hold. You called me,
+genius. You want my help, stay on the line and listen. We
+have much better things to do than talk to you anyway.
+
+3.  DO NOT read long error messages to me unless I ask you
+to. Do you honestly think we get anything out of a 50 digit
+hex number?
+
+4.  DO NOT start off a call by saying anything in the
+neighborhood of "hi, how's it going" or "busy today?" That
+just serves to piss us off. Get to the problem so we can get
+you off the phone. The day was great until I had to start
+answering your totally moronic questions.
+
+5.  DO NOT get pissed when we tell you that your system is
+royally buggered. We didn't f*** it up. It wasn't us. We're
+simply telling it like it is.
+
+6.  DO NOT call about unrelated products. We DO NOT know the
+intimate details of every piece of crap shareware program
+you dredge out of the internet. Nor do we want to. Stop it!
+
+7.  We DO NOT manufacture modems, write e-mail programs or
+engineer browsers. If something in this arena goes wrong,
+call the people who made the goddamned thing. YOU DON'T USE
+THE INTERNET TO FAX! Can't stress that one enough.
+
+8.  DO NOT compare us to AOL when something goes wrong with
+your connection to us. If you had the computer literacy of
+an 8 year old with a broken Atari 2600 you'd know better.
+Everyone else connects just fine. It's just you. Keep that
+in mind. It's just you.
+
+9.  DO NOT call simply for the purpose of giving us your
+thoughts on the content of our homepage or to request that
+we send you flyers so you can pass them out at bridge
+tournaments and bingo night. Not only is this a waste of our
+time, but it encourages just the type of user tech support
+reps fear most - the elderly.
+
+10.  DO NOT make us sit there on the phone while you tip toe
+through setup instructions so easy they were originally
+tested on lab chimps. We have better things to do than act
+as zoo keepers.
+
+11.  DO NOT call us and complain about a problem with your
+system and then say you're not in front of your computer
+when we try and help you. We aren't technological psychics.
+
+12.  DO NOT call us assuming the problem you're experiencing
+is our fault. If your computer crashes, performs illegal
+operations, gives you the blue screen of death, or flips you
+off and runs away with the bloody toaster to Mexico, you can
+be damn certain it isn't us who caused it.
+
+13.  DO NOT call us and announce to us that you don't know
+anything about computers. This really pisses us off. Trust
+me, we're well aware of that fact. We figured it out the
+minute you called and announced "help, the internet is
+broken!" Something here definitely needs help. People who
+know computers don't call us.
+
+14.  DO NOT call us and act as if you know all about
+computers and that you're doing us a favor by gracing us
+with your call. This pisses us off more than 13. Chiming in
+with stupid suggestions and comments only increases the
+already tremendous temptation we face to use you as an
+unwitting instrument of destruction and really do some
+damage to your system. Not that you'd notice.
+
+15. DO NOT (in addition to 14) say acronyms you don't know
+the meaning of or even what they are for. Just admit you're
+completely lost and leave the techno bull to us.
+
+16.  DO NOT call in if you can't speak English. This might
+seem like a small thing to you, but we find it just a tad
+annoying when we try and assess your problem and we can only
+understand every fifth word you say. And no, just because
+those words may be 'computer' or 'broken' doesn't absolve
+you of the offense.
+
+17.  DO NOT call in hoping to get another tech rep to tell
+you something different than the first one did. If one of us
+tells you your system is screwed, it's screwed. The second
+guy is going to simply look at the log and tell you the same
+thing, it's screwed. That is of course unless you really
+piss him off and then he's going to make sure your computer
+has the functionality of a house plant.
+
+18.  DO NOT be stoned or drunk when you call us. You
+wouldn't think this would need to actually be said, but
+believe me it's come up. If you can't control yourself and
+simply must call, at least have the common courtesy to offer
+us some of what you're on.
+
+============================================================
+Copyright 2000 Darren Collins
+collins@cyberelectric.net.au
+http://www.cyberelectric.net.au/~collins
+Kiama, NSW, Australia
+
+This newsletter may be freely distributed provided it is not
+modified in any way.
+============================================================
